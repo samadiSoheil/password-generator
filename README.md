@@ -61,13 +61,17 @@ Example:
 generated_obj = PasswordGenerator()
 
 # PIN
-generated_obj.generate_password(type='pin', length=4)
+pin = generated_obj.generate_password(type='pin', length=4)
 
 # Random Password
-generated_obj.generate_password(type="random", length=8, digits=True, letters=True, specefic_chars=True)
+random_pass = generated_obj.generate_password(type="random", length=4)
 
 # Memorable Password
-generated_obj.generate_password(type="memorabel", length=3)
+memorable = generated_obj.generate_password(type="memorable", length=4)
+
+print('pin password= ', pin)
+print('random password= ', random_pass)
+print('memorable password= ', memorable)
 ```
 
 ---
