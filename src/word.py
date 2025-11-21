@@ -1,0 +1,13 @@
+words = ["apple", "book", "cat", "dog", "elephant", "flower", "garden", "house", 
+         "ice", "jacket", "king", "lamp", "mountain", "notebook", "orange", 
+         "pencil", "queen", "river", "sun", "tree", "umbrella", "violin", 
+         "water", "xylophone", "yoga", "zebra", "ball", "car", "door", "egg", 
+         "fish", "grape", "hat", "island", "juice", "kite", "lion", "moon", 
+         "nest", "ocean", "park", "quilt", "rain", "star", "table", "unit", 
+         "vase", "window", "box", "yellow", "air", "bird", "cloud", "desk", 
+         "earth", "fire", "grass", "hill", "icecream", "jump", "key", "leaf", 
+         "music", "night", "owl", "piano", "quiet", "rose", "ship", "time", 
+         "up", "voice", "world", "xray", "year", "zone", "ant", "bee", "cake", 
+         "drum", "eye", "frog", "gold", "hand", "ink", "jelly", "knife", 
+         "lock", "map", "net", "old", "pear", "question", "ring", "snow", 
+         "tea", "uniform", "van", "wind", "xenon", "yacht", "zero"]
