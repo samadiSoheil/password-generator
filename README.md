@@ -90,8 +90,3 @@ Each class implements the abstract `PasswordType` and has its own `generate()` m
 
 ---
 
-## ✨ Future Improvements
-
-* Return password strings instead of printing them.
-* Add strength evaluation for generated passwords.
-* Add CLI or GUI interface.
