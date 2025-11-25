@@ -1,39 +1,56 @@
-# Password Generator
+# 🔐 Password Generator
 
-This project is a simple yet flexible password generator written in Python. It provides three types of passwords:
+This project is a **modular and extensible password generator** implemented using the **Factory Design Pattern**.
 
-* **PIN**: Generates numeric PIN codes.
-* **Random Password**: Generates random strings based on selected character sets.
-* **Memorable Password**: Generates passwords using random words, optionally with mixed casing.
+It supports three types of passwords:
+
+- **PIN** — Numeric PIN code with a non-zero first digit  
+- **Random Password** — Fully customizable random string  
+- **Memorable Password** — Password generated using readable words  
 
 ---
 
 ## 🚀 Features
 
 ### 🔢 PIN Password
-
-* Generates a numeric password.
-* First digit is always non-zero.
-* Remaining digits are chosen randomly.
-
-### 🔐 Random Password
-
-* You can choose to include:
-
-  * Digits (`0-9`)
-  * Letters (`a-z`, `A-Z`)
-  * Special characters (`!@#$%^&*` etc.)
-* Fully customizable output.
-
-### 🧠 Memorable Password
-
-* Generates passwords based on a list of words imported from `word.py`.
-* Words are joined with a separator (default: `-`).
-* Randomly capitalizes some words for extra uniqueness.
+- Contains only digits  
+- First digit is always non-zero  
+- Customizable length (default: `8`)
 
 ---
 
-## 📦 Project Structure
+### 🔐 Random Password
+- Fully configurable  
+- Supports:
+  - Digits (`0–9`)
+  - Letters (`a–z`, `A–Z`)
+  - Special characters (`!@#$%^&*...`)
+- Options are controlled via `kwargs`  
+- Customizable length (default: `8`)
+
+Available parameters:
+
+```python
+digits=True
+letters=True
+specific_chars=False
+length=8
+```
+
+--- 
+
+### 🧠 Memorable Password
+
+- Generates passwords based on random words
+- Random capitalization for added uniqueness
+- Customizable:
+    - Number of words (`length`)
+    - Word separator (`separator`)
+    - Custom word list (`words`)
+
+--- 
+
+## 📁 Project Structure
 
 ```
 project-folder/
@@ -43,50 +60,56 @@ project-folder/
 │── README.md
 ```
 
-`word.py` must contain a list variable named `words`:
+## 🧬 Architecture (Factory Pattern)
 
-```python
-words = ["apple", "river", "moon", "storm", ...]
-```
+Each password type has its own class:
+
+- `PinPass`
+- `RandomPass`
+- `MemorablePass`
+
+Each type also has a corresponding factory:
+
+- `PinPassFactory`
+- `RandomPassFactory`
+- `MemorablePassFactory`
+
+The `password_selector()` function chooses the correct factory based on `pass_type`, creates an object, and generates the password.
 
 ---
 
-## 📚 Usage
 
-The main class for generating passwords is `PasswordGenerator`.
-
-Example:
+## 🧪 Usage
 
 ```python
-generated_obj = PasswordGenerator()
+from main import main
 
 # PIN
-pin = generated_obj.generate_password(type='pin', length=4)
+pin = main('pin', length=4)
+print("PIN:", pin)
 
 # Random Password
-random_pass = generated_obj.generate_password(type="random", length=4)
+rand_pass = main('random', length=10, letters=True, digits=True, specific_chars=True)
+print("Random:", rand_pass)
 
 # Memorable Password
-memorable = generated_obj.generate_password(type="memorable", length=4)
-
-print('pin password= ', pin)
-print('random password= ', random_pass)
-print('memorable password= ', memorable)
+memorable = main(
+    'memorable',
+    length=3,
+    words=['ali', 'reza', 'jafar', 'hamid'],
+    separator='-'
+)
+print("Memorable:", memorable)
 ```
 
----
 
-## 🛠 How It Works
+## ⚙️ Main Function
 
-### Factory Pattern
+```python
+main(pass_type, **kwargs)
+```
 
-`FactoryPasswordType` determines which password type should be created:
-
-* `pin` → `Pin_pass`
-* `random` → `Random_pass`
-* `memorabel` → `Memorabel_pass`
-
-Each class implements the abstract `PasswordType` and has its own `generate()` method.
-
----
-
+Supported password types:
+- `"pin"`
+- `"random"`
+- `"memorable"`
