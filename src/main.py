@@ -4,51 +4,49 @@ from abc import ABC, abstractmethod
 from word import words
 
 
-class PasswordType(ABC):
+class Password(ABC):
 
     @abstractmethod
-    def generate(self, length: int) -> str:
+    def generate(self):
         pass
 
 
-class PasswordGenerator:
-    
-    def generate_password(
-        self, type, length, word_list=words, digits=False, letters=True, specific_chars=False
-    ):
-        return FactoryPasswordType(length).type_of_pass(
-            type, digits, letters, specific_chars, word_list
-        )
+class PasswordFactory(ABC):
+
+    @abstractmethod
+    def create_pass(self):
+        pass
 
 
-class FactoryPasswordType:
+# password classes
+class PinPass(Password):
 
-    def __init__(self, length):
-        self.pass_length = length
+    def generate(self, **kwargs) -> str:
 
-    def type_of_pass(self, type, digits, letters, specific_chars, word_list):
+        length = kwargs.get('length', 8)
 
-        if type == "pin":
-            return Pin_pass().generate(self.pass_length)
+        first_digit = random.choice("123456789")
+        numbers = "".join( random.choices("0123456789", k = length - 1 ))
 
-        elif type == "memorable":
-            return Memorable_pass(word_list=word_list).generate(length=self.pass_length)
+        password = first_digit + numbers
 
-        elif type == "random":
-            random_pass_obj = Random_pass()
-            random_pass_obj.config(digits, letters, specific_chars)
-            return random_pass_obj.generate(self.pass_length)
-
-        else:
-            raise ValueError("please enter valid data, pin, memorable, random.")
+        return password
 
 
-class Random_pass(PasswordType):
+class RandomPass(Password):
 
     def __init__(self):
         self.characters = ""
 
-    def config(self, digits, letters, specific_chars):
+    def config(self, **kwargs):
+
+        # reset characters  
+        self.characters = ""
+
+        digits = kwargs.get('digits', True)
+        letters = kwargs.get('letters', True)
+        specific_chars = kwargs.get('specific_chars', False)
+
         if digits:
             self.characters += string.digits
 
@@ -58,48 +56,83 @@ class Random_pass(PasswordType):
         if specific_chars:
             self.characters += string.punctuation
 
-    def generate(self, length):
-        password = "".join(random.choices(self.characters, k=length))
+    def generate(self, **kwargs):
+
+        self.config(**kwargs)
+
+        if not self.characters:
+            raise ValueError("No character sets selected for password generation.")
+
+        length = kwargs.setdefault('length', 8)
+
+        password = "".join( random.choices( self.characters, k = length ))
 
         return password
 
 
-class Pin_pass(PasswordType):
-    def generate(self, length: int) -> str:
+class MemorablePass(Password):
 
-        first_digit = random.choice("123456789")
-
-        numbers = "".join(random.choices("0123456789", k=length-1))
-        password = first_digit + numbers
-
-        return password
-
-
-class Memorable_pass(PasswordType):
-
-    def __init__(self, word_list: list[str]):
-        self.words = word_list
-        self.words_separator = '-'
-
-    def generate(self, length: int) -> str:
-
-        password_words: list =  random.choices(self.words, k=length)
+    def generate(self, length: int = 8, separator: str = '-', words_list: list[str] = words) -> str:
+        
+        password_words: list =  random.choices( words_list, k = length )
         generated_pass: list = [word.upper() if random.choice([True, False]) else word.lower() for word in password_words]
-        password = self.words_separator.join(generated_pass)
+        password = separator.join(generated_pass)
 
         return password
 
 
-def main():
-    generated_obj = PasswordGenerator()
-    pin = generated_obj.generate_password(type='pin', length=4)
-    random_pass = generated_obj.generate_password(type="random", length=4)
-    memorable = generated_obj.generate_password(type="memorable", length=4)
 
-    print('pin password= ', pin)
-    print('random password= ', random_pass)
-    print('memorable password= ', memorable)
+# password factories
+class PinPassFactory(PasswordFactory):
+
+    def create_pass(self):
+        return PinPass()
+
+
+class RandomPassFactory(PasswordFactory):
+
+    def create_pass(self):
+        return RandomPass()
+
+
+class MemorablePassFactory(PasswordFactory):
+
+    def create_pass(self):
+        return MemorablePass()
+
+
+def password_selector(pass_type = 'pin', **kwargs):
+
+    pass_type = pass_type.lower()
+
+    factories = {
+        'pin': PinPassFactory(),
+        'random': RandomPassFactory(),
+        'memorable': MemorablePassFactory(),
+    }
+
+    factory = factories.get(pass_type)
+
+    if not factory :
+        raise ValueError('plese enter valid type: PIN, RANDOM, MEMORABLE.')
+
+    password = factory.create_pass().generate(**kwargs)
+
+    return password
+
+
+def main(pass_type, **kwargs):
+
+   return password_selector(pass_type, **kwargs)
 
 
 if __name__ == "__main__":
-    main()
+
+    pin = main('pin', length = 3)
+    print(pin)
+
+    random_pass = main('random', length = 9)
+    print(random_pass)
+
+    memorable_pass = main('memorable', length = 3)
+    print(memorable_pass)
